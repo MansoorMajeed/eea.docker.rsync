@@ -10,6 +10,16 @@ chmod go-rwx /root/.ssh/authorized_keys
 sed -i "s/.*PasswordAuthentication .*/PasswordAuthentication no/g" /etc/ssh/sshd_config
 sed -i 's/root:!/root:*/' /etc/shadow
 
+
+# if RSYNC_PASSWORD env var is set, create a password file for "rsyncuser"
+if [ -n "$RSYNC_PASSWORD" ]; then
+  echo "Setting rsyncuser password"
+  echo "rsyncuser:$RSYNC_PASSWORD" | chpasswd
+else
+  echo "No password set for rsyncuser"
+fi
+
+
 # Provide SSH_AUTH_KEY_* via environment variable
 for item in `env`; do
    case "$item" in
